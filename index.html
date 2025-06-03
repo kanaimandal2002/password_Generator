@@ -3,45 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Generator</title>
+    <meta name="description" content="Generate strong, secure passwords with customizable options">
+    <title>SecurePass - Strong Password Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔐</text></svg>">
 </head>
 <body>
     <div class="container">
-        <h1>Password Generator</h1>
-        <div class="password-display">
-            <input type="text" id="password" readonly>
-            <button id="copy-btn">Copy</button>
-        </div>
+        <header class="app-header">
+            <h1><i class="fas fa-key"></i> SecurePass</h1>
+            <p class="subtitle">Generate strong, secure passwords instantly</p>
+        </header>
         
-        <div class="controls">
-            <div class="control-group">
-                <label for="length">Password Length: <span id="length-value">12</span></label>
-                <input type="range" id="length" min="4" max="50" value="12">
-            </div>
+        <main>
+            <section class="password-section">
+                <div class="password-display">
+                    <input type="text" id="password" readonly aria-label="Generated password">
+                    <button id="copy-btn" aria-label="Copy password to clipboard">
+                        <i class="far fa-copy"></i>
+                    </button>
+                    <button id="refresh-btn" aria-label="Generate new password">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                <div class="strength-meter">
+                    <div id="strength-meter-fill" class="strength-meter-fill"></div>
+                </div>
+                <p id="strength-text" class="strength-text">Password Strength: <span>Medium</span></p>
+            </section>
             
-            <div class="control-group">
-                <label><input type="checkbox" id="uppercase" checked> Uppercase Letters (A-Z)</label>
-            </div>
-            
-            <div class="control-group">
-                <label><input type="checkbox" id="lowercase" checked> Lowercase Letters (a-z)</label>
-            </div>
-            
-            <div class="control-group">
-                <label><input type="checkbox" id="numbers" checked> Numbers (0-9)</label>
-            </div>
-            
-            <div class="control-group">
-                <label><input type="checkbox" id="symbols" checked> Symbols (!@#$%^&*)</label>
-            </div>
-            
-            <div class="control-group">
-                <label><input type="checkbox" id="exclude-similar"> Exclude Similar Characters (i,l,1,L,o,0,O)</label>
-            </div>
-            
-            <button id="generate-btn">Generate Password</button>
-        </div>
+            <section class="controls-section">
+                <h2 class="section-title">Customize Your Password</h2>
+                
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="length">
+                            <span>Password Length: <strong id="length-value">12</strong></span>
+                            <input type="range" id="length" min="4" max="50" value="12" aria-labelledby="length-label">
+                        </label>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="uppercase">
+                            <input type="checkbox" id="uppercase" checked>
+                            <span>Uppercase Letters <code>(A-Z)</code></span>
+                        </label>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="lowercase">
+                            <input type="checkbox" id="lowercase" checked>
+                            <span>Lowercase Letters <code>(a-z)</code></span>
+                        </label>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="numbers">
+                            <input type="checkbox" id="numbers" checked>
+                            <span>Numbers <code>(0-9)</code></span>
+                        </label>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="symbols">
+                            <input type="checkbox" id="symbols" checked>
+                            <span>Symbols <code>(!@#$%^&*)</code></span>
+                        </label>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="exclude-similar">
+                            <input type="checkbox" id="exclude-similar">
+                            <span>Exclude Similar Characters <code>(i,l,1,L,o,0,O)</code></span>
+                        </label>
+                    </div>
+                    
+                    <div class="control-group">
+                        <label for="exclude-ambiguous">
+                            <input type="checkbox" id="exclude-ambiguous">
+                            <span>Exclude Ambiguous Characters <code>({}[]()/\'"`~,;:.<>)</code></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <button id="generate-btn" class="generate-btn">
+                    <i class="fas fa-bolt"></i> Generate Password
+                </button>
+            </section>
+        </main>
+        
+        <footer class="app-footer">
+            <p>🔒 Passwords are generated in your browser and never stored or transmitted</p>
+            <p class="credits">Made with <i class="fas fa-heart" style="color: #f72585;"></i> by <a href="#" target="_blank">YourName</a></p>
+        </footer>
     </div>
     
     <script src="script.js"></script>
