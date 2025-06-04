@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
     const passwordField = document.getElementById('password');
     const generateBtn = document.getElementById('generate-btn');
     const copyBtn = document.getElementById('copy-btn');
+    const refreshBtn = document.getElementById('refresh-btn');
     const lengthSlider = document.getElementById('length');
     const lengthValue = document.getElementById('length-value');
     const uppercaseCheckbox = document.getElementById('uppercase');
@@ -9,84 +11,185 @@ document.addEventListener('DOMContentLoaded', function() {
     const numbersCheckbox = document.getElementById('numbers');
     const symbolsCheckbox = document.getElementById('symbols');
     const excludeSimilarCheckbox = document.getElementById('exclude-similar');
-    
+    const excludeAmbiguousCheckbox = document.getElementById('exclude-ambiguous');
+    const strengthMeterFill = document.getElementById('strength-meter-fill');
+    const strengthText = document.getElementById('strength-text').querySelector('span');
+
     // Character sets
-    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
-    const numberChars = '0123456789';
-    const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    const similarChars = 'il1Lo0O';
-    
+    const characterSets = {
+        uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        lowercase: 'abcdefghijklmnopqrstuvwxyz',
+        numbers: '0123456789',
+        symbols: '!@#$%^&*',
+        similar: 'il1Lo0O',
+        ambiguous: '{}[]()/\'"`~,;:.<>'
+    };
+
+    // Password strength levels
+    const strengthLevels = [
+        { text: 'Very Weak', color: '#ef233c', width: '20%' },
+        { text: 'Weak', color: '#f77f00', width: '40%' },
+        { text: 'Medium', color: '#fcbf49', width: '60%' },
+        { text: 'Strong', color: '#4cc9f0', width: '80%' },
+        { text: 'Very Strong', color: '#2ecc71', width: '100%' }
+    ];
+
+    // Initialize app
+    function init() {
+        // Set initial length value display
+        updateLengthDisplay();
+        
+        // Generate first password
+        generatePassword();
+        
+        // Set up event listeners
+        setupEventListeners();
+    }
+
     // Update length value display
-    lengthSlider.addEventListener('input', function() {
-        lengthValue.textContent = this.value;
-    });
-    
+    function updateLengthDisplay() {
+        lengthValue.textContent = lengthSlider.value;
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+        // Slider input
+        lengthSlider.addEventListener('input', function() {
+            updateLengthDisplay();
+            generatePassword();
+        });
+
+        // Checkbox changes
+        const checkboxes = [
+            uppercaseCheckbox, 
+            lowercaseCheckbox, 
+            numbersCheckbox, 
+            symbolsCheckbox,
+            excludeSimilarCheckbox,
+            excludeAmbiguousCheckbox
+        ];
+        
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                // Ensure at least one character set is selected
+                if (!uppercaseCheckbox.checked && 
+                    !lowercaseCheckbox.checked && 
+                    !numbersCheckbox.checked && 
+                    !symbolsCheckbox.checked) {
+                    // Default to lowercase if nothing selected
+                    lowercaseCheckbox.checked = true;
+                }
+                generatePassword();
+            });
+        });
+
+        // Generate button
+        generateBtn.addEventListener('click', generatePassword);
+
+        // Copy button
+        copyBtn.addEventListener('click', copyToClipboard);
+
+        // Refresh button
+        refreshBtn.addEventListener('click', generatePassword);
+
+        // Click on password field to select all
+        passwordField.addEventListener('click', function() {
+            this.select();
+        });
+    }
+
     // Generate password
-    generateBtn.addEventListener('click', function() {
+    function generatePassword() {
         let charset = '';
         let password = '';
         
+        // Build character set based on selected options
         if (uppercaseCheckbox.checked) {
-            charset += uppercaseChars;
+            charset += characterSets.uppercase;
         }
-        
         if (lowercaseCheckbox.checked) {
-            charset += lowercaseChars;
+            charset += characterSets.lowercase;
         }
-        
         if (numbersCheckbox.checked) {
-            charset += numberChars;
+            charset += characterSets.numbers;
         }
-        
         if (symbolsCheckbox.checked) {
-            charset += symbolChars;
+            charset += characterSets.symbols;
         }
         
-        // If no character sets are selected, use all
-        if (charset === '') {
-            charset = uppercaseChars + lowercaseChars + numberChars + symbolChars;
-            uppercaseCheckbox.checked = true;
-            lowercaseCheckbox.checked = true;
-            numbersCheckbox.checked = true;
-            symbolsCheckbox.checked = true;
-        }
-        
-        // Remove similar characters if option is checked
+        // Remove excluded characters
         if (excludeSimilarCheckbox.checked) {
-            for (const char of similarChars) {
+            for (const char of characterSets.similar) {
+                charset = charset.replace(char, '');
+            }
+        }
+        
+        if (excludeAmbiguousCheckbox.checked) {
+            for (const char of characterSets.ambiguous) {
                 charset = charset.replace(char, '');
             }
         }
         
         // Generate password
         const length = parseInt(lengthSlider.value);
+        const array = new Uint32Array(length);
+        window.crypto.getRandomValues(array);
+        
         for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * charset.length);
-            password += charset[randomIndex];
+            password += charset[array[i] % charset.length];
         }
         
         passwordField.value = password;
-    });
-    
+        updatePasswordStrength(password);
+    }
+
     // Copy password to clipboard
-    copyBtn.addEventListener('click', function() {
+    function copyToClipboard() {
         if (!passwordField.value) return;
         
         passwordField.select();
         document.execCommand('copy');
         
         // Visual feedback
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = 'Copied!';
-        copyBtn.style.backgroundColor = '#2ecc71';
+        copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+        copyBtn.classList.add('copied');
         
         setTimeout(function() {
-            copyBtn.textContent = originalText;
-            copyBtn.style.backgroundColor = '#3498db';
+            copyBtn.innerHTML = '<i class="far fa-copy"></i>';
+            copyBtn.classList.remove('copied');
         }, 2000);
-    });
-    
-    // Generate a password on page load
-    generateBtn.click();
+    }
+
+    // Calculate password strength
+    function updatePasswordStrength(password) {
+        let score = 0;
+        
+        // Length score
+        if (password.length >= 12) score += 2;
+        else if (password.length >= 8) score += 1;
+        
+        // Character variety score
+        const hasUppercase = /[A-Z]/.test(password);
+        const hasLowercase = /[a-z]/.test(password);
+        const hasNumbers = /[0-9]/.test(password);
+        const hasSymbols = /[^A-Za-z0-9]/.test(password);
+        
+        if (hasUppercase) score += 1;
+        if (hasLowercase) score += 1;
+        if (hasNumbers) score += 1;
+        if (hasSymbols) score += 1;
+        
+        // Cap score at 4 (array index)
+        score = Math.min(score, 4);
+        
+        // Update strength meter
+        const strength = strengthLevels[score];
+        strengthMeterFill.style.width = strength.width;
+        strengthMeterFill.style.backgroundColor = strength.color;
+        strengthText.textContent = strength.text;
+        strengthText.style.color = strength.color;
+    }
+
+    // Initialize the app
+    init();
 });
