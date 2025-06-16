@@ -27,7 +27,3 @@ A simple web-based password generator.
 - `style.css` – Styles for the UI
 - `script.js` – Password generation logic
 - `README.md` – Project information
-
-## License
-
-MIT
