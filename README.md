@@ -1,5 +1,7 @@
 # Password-Generator
 
+![password_generator preveiw] (pass.png)
+
 A simple web-based password generator.
 
 ## Features
