@@ -2,10 +2,7 @@
 
 A simple web-based password generator.
 
-
 ![password_generator preveiw](pass.png)
-
-
 
 ## Features
 
