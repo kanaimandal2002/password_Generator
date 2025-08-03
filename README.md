@@ -16,6 +16,10 @@ A simple web-based password generator.
 - Copy generated password to clipboard
 - Responsive and clean UI
 
+## Live Demo
+
+You can view a live version of this tool at [(https://kanaimandal2002.github.io/password-Generator/)]
+
 ## Usage
 
 1. Open `index.html` in your browser.
