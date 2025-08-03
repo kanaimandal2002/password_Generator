@@ -18,7 +18,7 @@ A simple web-based password generator.
 
 ## Live Demo
 
-You can view a live version of this tool at [(https://kanaimandal2002.github.io/password-Generator/)]
+You can view a live version of this tool at [(https://kanaimandal2002.github.io/password_Generator/)]
 
 ## Usage
 
