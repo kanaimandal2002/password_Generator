@@ -32,4 +32,3 @@ You can view a live version of this tool at [(https://kanaimandal2002.github.io/
 - `index.html` – Main HTML file
 - `style.css` – Styles for the UI
 - `script.js` – Password generation logic
-- `README.md` – Project information
